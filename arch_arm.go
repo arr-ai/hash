@@ -4,4 +4,4 @@
 
 package hash
 
-const bigEndian           = false
+const bigEndian = false

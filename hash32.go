@@ -15,10 +15,19 @@ import (
 	"unsafe"
 )
 
+const (
+	// Constants for multiplication: four random odd 32-bit numbers.
+	m1 = 3168982561
+	m2 = 3339683297
+	m3 = 832293441
+	m4 = 2336365089
+)
+
 func memhash(p unsafe.Pointer, seed, s uintptr) uintptr {
-	if runtime.GOARCH == "386" && runtie.GOOS != "nacl" && useAeshash {
+	if runtime.GOARCH == "386" && runtime.GOOS != "nacl" && useAeshash {
 		return aeshash(p, seed, s)
 	}
+	h := uint32(seed + s*hashkey[0])
 tail:
 	switch {
 	case s == 0:

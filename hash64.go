@@ -23,6 +23,7 @@ const (
 	m4 = 15839092249703872147
 )
 
+//nolint:funlen
 func memhash(p unsafe.Pointer, seed, s uintptr) uintptr {
 	if (runtime.GOARCH == "amd64" || runtime.GOARCH == "arm64") &&
 		runtime.GOOS != "nacl" && useAeshash {

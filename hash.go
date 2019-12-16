@@ -6,6 +6,7 @@ import (
 	"unsafe"
 )
 
+// Interface returns a hash for i.
 //nolint:gocyclo,funlen
 func Interface(i interface{}, seed uintptr) uintptr {
 	switch k := i.(type) {
@@ -45,6 +46,8 @@ func Interface(i interface{}, seed uintptr) uintptr {
 		return Complex128(k, seed)
 	case string:
 		return String(k, seed)
+	case struct{}:
+		return seed
 	case []interface{}:
 		return sliceInterfaceHash(k, seed)
 	default:
@@ -52,78 +55,97 @@ func Interface(i interface{}, seed uintptr) uintptr {
 	}
 }
 
+// Bool returns a hash for b.
 func Bool(b bool, seed uintptr) uintptr {
 	return algarray[algMEM8](noescape(unsafe.Pointer(&b)), seed)
 }
 
+// Int returns a hash for x.
 func Int(x int, seed uintptr) uintptr {
 	return algarray[algINT](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Int8 returns a hash for x.
 func Int8(x int8, seed uintptr) uintptr {
 	return algarray[algMEM8](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Int16 returns a hash for x.
 func Int16(x int16, seed uintptr) uintptr {
 	return algarray[algMEM16](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Int32 returns a hash for x.
 func Int32(x int32, seed uintptr) uintptr {
 	return algarray[algMEM32](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Int64 returns a hash for x.
 func Int64(x int64, seed uintptr) uintptr {
 	return algarray[algMEM64](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Uint returns a hash for x.
 func Uint(x uint, seed uintptr) uintptr {
 	return algarray[algUINT](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Uint8 returns a hash for x.
 func Uint8(x uint8, seed uintptr) uintptr {
 	return algarray[algMEM8](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Uint16 returns a hash for x.
 func Uint16(x uint16, seed uintptr) uintptr {
 	return algarray[algMEM16](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Uint32 returns a hash for x.
 func Uint32(x uint32, seed uintptr) uintptr {
 	return algarray[algMEM32](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Uint64 returns a hash for x.
 func Uint64(x uint64, seed uintptr) uintptr {
 	return algarray[algMEM64](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Uintptr returns a hash for x.
 func Uintptr(x, seed uintptr) uintptr {
 	return algarray[algPTR](noescape(unsafe.Pointer(&x)), seed)
 }
 
+// Float32 returns a hash for f.
 func Float32(f float32, seed uintptr) uintptr {
 	return algarray[algFLOAT32](noescape(unsafe.Pointer(&f)), seed)
 }
 
+// Float64 returns a hash for f.
 func Float64(f float64, seed uintptr) uintptr {
 	return algarray[algFLOAT64](noescape(unsafe.Pointer(&f)), seed)
 }
 
+// Complex64 returns a hash for c.
 func Complex64(c complex64, seed uintptr) uintptr {
 	return algarray[algCPLX64](noescape(unsafe.Pointer(&c)), seed)
 }
 
+// Complex128 returns a hash for c.
 func Complex128(c complex128, seed uintptr) uintptr {
 	return algarray[algCPLX128](noescape(unsafe.Pointer(&c)), seed)
 }
 
+// String returns a hash for s.
 func String(s string, seed uintptr) uintptr {
 	return algarray[algSTRING](noescape(unsafe.Pointer(&s)), seed)
 }
 
+// UnsafePointer returns a hash for p
 func UnsafePointer(p unsafe.Pointer, seed uintptr) uintptr {
 	return Uintptr(uintptr(p), seed)
 }
 
+// Value returns a hash for v.
 //nolint:funlen
 func Value(v reflect.Value, seed uintptr) uintptr {
 	switch v.Kind() {
