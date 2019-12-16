@@ -11,7 +11,7 @@ import (
 func Interface(i interface{}, seed uintptr) uintptr {
 	switch k := i.(type) {
 	case Hashable:
-		return k.Hash()
+		return k.Hash(seed)
 	case bool:
 		return Bool(k, seed)
 	case int:
