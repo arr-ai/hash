@@ -1,4 +1,4 @@
-module github.com/marcelocantos/fhash
+module github.com/marcelocantos/hash
 
 go 1.13
 
