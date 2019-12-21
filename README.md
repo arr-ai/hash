@@ -1,7 +1,8 @@
 # hash
 
 Hash is a fast non-cryptographic hash function library, primarily intended for
-use in hash tables. Significant portions of this library are lifted
+use in hash tables. Significant portions of this library are lifted from Go
+internals.
 
 ## Documentation
 
