@@ -1,4 +1,4 @@
-module github.com/marcelocantos/hash
+module github.com/arr-ai/hash
 
 go 1.13
 

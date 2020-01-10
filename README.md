@@ -6,7 +6,7 @@ internals.
 
 ## Documentation
 
-https://godoc.org/github.com/marcelocantos/hash
+https://godoc.org/github.com/arr-ai/hash
 
 
 ## License
