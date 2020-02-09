@@ -6,6 +6,7 @@ package hash
 
 import (
 	"crypto/rand"
+	"fmt"
 	"runtime"
 	"unsafe"
 
@@ -143,6 +144,30 @@ var aeskeysched [hashRandomBytes]byte
 
 // used in hash{32,64}.go to seed the hash function
 var hashkey [4]uintptr
+
+// GetSeeds returns the internal seeds used for computing hashes.
+func GetSeeds() (a []byte, h []uintptr) {
+	if useAeshash {
+		return aeskeysched[:], nil
+	}
+	return nil, hashkey[:]
+}
+
+// SetSeeds sets the internal seeds used for computing hashes.
+func SetSeeds(a []byte, h []uintptr) error {
+	if useAeshash {
+		if len(a) != len(aeskeysched) {
+			return fmt.Errorf("SetSeeds: aeskeysched: %d != %d", len(a), len(aeskeysched)) //nolint:golint
+		}
+		copy(aeskeysched[:], a)
+		return nil
+	}
+	if len(h) != len(hashkey) {
+		return fmt.Errorf("SetSeeds: hashkey: %d != %d", len(h), len(hashkey)) //nolint:golint
+	}
+	copy(hashkey[:], h)
+	return nil
+}
 
 var _ = func() (_ struct{}) {
 	// Install AES hash algorithms if the instructions needed are present.
