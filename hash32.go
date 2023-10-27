@@ -6,6 +6,7 @@
 //   xxhash: https://code.google.com/p/xxhash/
 // cityhash: https://code.google.com/p/cityhash/
 
+//go:build 386 || arm || mips || mipsle
 // +build 386 arm mips mipsle
 
 package hash
@@ -23,7 +24,7 @@ const (
 	m4 = 2336365089
 )
 
-func memhash(p unsafe.Pointer, seed, s uintptr) uintptr {
+func memhash(p unsafe.Pointer, seed, s Seed) Seed {
 	if runtime.GOARCH == "386" && runtime.GOOS != "nacl" && useAeshash {
 		return aeshash(p, seed, s)
 	}
@@ -88,10 +89,10 @@ tail:
 	h ^= h >> 13
 	h *= m4
 	h ^= h >> 16
-	return uintptr(h)
+	return Seed(h)
 }
 
-func memhash32(p unsafe.Pointer, seed uintptr) uintptr {
+func memhash32(p unsafe.Pointer, seed Seed) Seed {
 	h := uint32(seed + 4*hashkey[0])
 	h ^= readUnaligned32(p)
 	h = rotl_15(h*m1) * m2
@@ -100,10 +101,10 @@ func memhash32(p unsafe.Pointer, seed uintptr) uintptr {
 	h ^= h >> 13
 	h *= m4
 	h ^= h >> 16
-	return uintptr(h)
+	return Seed(h)
 }
 
-func memhash64(p unsafe.Pointer, seed uintptr) uintptr {
+func memhash64(p unsafe.Pointer, seed Seed) Seed {
 	h := uint32(seed + 8*hashkey[0])
 	h ^= readUnaligned32(p)
 	h = rotl_15(h*m1) * m2
@@ -114,7 +115,7 @@ func memhash64(p unsafe.Pointer, seed uintptr) uintptr {
 	h ^= h >> 13
 	h *= m4
 	h ^= h >> 16
-	return uintptr(h)
+	return Seed(h)
 }
 
 // Note: in order to get the compiler to issue rotl instructions, we

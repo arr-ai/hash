@@ -1,4 +1,4 @@
-package hash
+package hash_test
 
 import (
 	"math"
@@ -6,17 +6,17 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/arr-ai/hash"
 )
 
 func TestHash64(t *testing.T) {
-	if Interface(uint64(0), 0) == 0 {
+	if hash.Any(uint64(0), 0) == 0 {
 		t.Error()
 	}
 }
 
 func TestHash64String(t *testing.T) {
-	if Interface("hello", 0) == 0 {
+	if hash.Any("hello", 0) == 0 {
 		t.Error()
 	}
 }
@@ -31,12 +31,13 @@ func TestHashMatchesEquality(t *testing.T) {
 		for _, a := range cornucopia {
 			for _, b := range cornucopia {
 				if aSeed == bSeed && a == b {
-					assert.Equal(t, Interface(a, aSeed), Interface(b, bSeed),
-						"a=%v b=%v hash(a)=%v hash(b)=%v",
-						a, b, Interface(a, aSeed), Interface(b, aSeed))
-				} else if Interface(a, aSeed) == Interface(b, bSeed) {
-					h := Interface(a, aSeed)
-					_ = Interface(b, bSeed)
+					if hash.Any(a, aSeed) != hash.Any(b, bSeed) {
+						t.Errorf("a=%v b=%v hash(a)=%v hash(b)=%v",
+							a, b, hash.Any(a, aSeed), hash.Any(b, aSeed))
+					}
+				} else if hash.Any(a, aSeed) == hash.Any(b, bSeed) {
+					h := hash.Any(a, aSeed)
+					_ = hash.Any(b, bSeed)
 					t.Logf("\nhash(%#v %[1]T, %v) ==\nhash(%#v %[3]T, %v) == %d",
 						a, aSeed, b, bSeed, h)
 					falsePositives++
@@ -45,22 +46,41 @@ func TestHashMatchesEquality(t *testing.T) {
 			}
 		}
 	}
-	assert.LessOrEqual(t, falsePositives, total/100, total)
+	if falsePositives > total/100 {
+		t.Error(total)
+	}
 }
 
 func BenchmarkHash(b *testing.B) {
 	r := rand.New(rand.NewSource(0))
 	for i := 0; i < b.N; i++ {
-		Interface(cornucopia[r.Int()%len(cornucopia)], 0)
+		hash.Interface(cornucopia[r.Int()%len(cornucopia)], 0)
 	}
 }
 
 var cornucopia = func() []interface{} {
+	type A struct {
+		X int
+		Y string
+	}
+
+	type B struct {
+		X int
+		Y string
+	}
+
+	type C A
+
+	type D struct {
+		X, Y int
+	}
+
 	x := 42
 	result := []interface{}{
 		false,
 		true,
 		&x,
+		&[]int{43}[0],
 		&[]int{43}[0],
 		&[]string{"hello"}[0],
 		uintptr(unsafe.Pointer(&x)),
@@ -70,6 +90,17 @@ var cornucopia = func() []interface{} {
 		[...]int{},
 		[...]int{1, 2, 3, 4, 5},
 		[...]int{5, 4, 3, 2, 1},
+		A{1, "hello"},
+		A{1, "goodbye"},
+		A{2, "hello"},
+		B{1, "hello"},
+		B{1, "goodbye"},
+		B{2, "hello"},
+		C{1, "hello"},
+		C{1, "goodbye"},
+		C{2, "hello"},
+		D{1, 2},
+		D{2, 1},
 	}
 
 	// The following number lists are massive overkill, but it can't hurt.
