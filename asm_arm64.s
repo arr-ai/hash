@@ -73,7 +73,7 @@ TEXT aeshashbody<>(SB),NOSPLIT|NOFRAME,$0
 	VMOV	R3, V30.D[0]
 	VMOV	R1, V30.D[1] // load length into seed
 
-	MOVD	$runtime·aeskeysched+0(SB), R4
+	MOVD	$·aeskeysched+0(SB), R4
 	VLD1.P	16(R4), [V0.B16]
 	AESE	V30.B16, V0.B16
 	AESMC	V0.B16, V0.B16
